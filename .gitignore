@@ -1,5 +1,8 @@
 aligned
 faces
 
-data.txt
 frontal-data.txt
+
+env
+
+*.pyc 
