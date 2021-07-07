@@ -8,11 +8,14 @@ def plot_confusion_matrix(matrix, title='Confusion matrix', cmap = plt.cm.Blues)
     plt.title(title)
     plt.colorbar()
 
+    plt.show()
+
 def main():
     data_loader()
     frontal_data_loader()
 
-    # plot_confusion_matrix(None)
+    conf_matrix = confusion_matrix([], [], labels=[0,1])	 
+    plot_confusion_matrix(conf_matrix)
 
 if __name__ == "__main__":
     main()
