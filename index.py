@@ -1,6 +1,7 @@
-from data.loader import data_loader, frontal_data_loader
+from data.loader import frontal_data_loader
+
 from sklearn.metrics import confusion_matrix
-from model import make_cnn
+from model import make_age_cnn, make_gender_cnn
 
 import matplotlib.pyplot as plt
 
@@ -9,14 +10,17 @@ def plot_confusion_matrix(matrix, title='Confusion matrix', cmap = plt.cm.Blues)
     plt.title(title)
     plt.colorbar()
 
-    plt.show()
+    # plt.show()
 
 def main():
-    data_loader()
-    frontal_data_loader()
+    data = frontal_data_loader()
+    print(len(data))
 
-    cnn = make_cnn()
-    print(cnn)
+    age_cnn = make_age_cnn()
+    print(age_cnn)
+
+    gender_cnn = make_gender_cnn()
+    print(gender_cnn)
 
     conf_matrix = confusion_matrix([], [], labels=[0,1])	 
     plot_confusion_matrix(conf_matrix)

@@ -1,9 +1,10 @@
+import glob
 import pandas as pd
 
-def data_loader():
-    data = pd.read_csv('data.csv')
-    print(data)
-
 def frontal_data_loader():
-    frontal_data = pd.read_csv('frontal_data.csv')
-    print(frontal_data)
+    data_path = 'csv_data/*.csv'
+
+    mapped_data = map(pd.read_csv, glob.glob(data_path))
+    data = pd.concat(mapped_data).to_dict('records')
+
+    return data
