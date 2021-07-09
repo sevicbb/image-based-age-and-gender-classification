@@ -5,7 +5,7 @@ from keras.layers.core import Activation
 
 from keras.layers.convolutional import Conv2D
 
-def make_model(input_shape):
+def make_model(classes, input_shape):
     model = Sequential()
 
     model.add(Conv2D(96, (7, 7), padding = "same", input_shape = input_shape))
@@ -17,6 +17,7 @@ def make_model(input_shape):
     model.add(Dense(512))
     model.add(Dense(512))
 
+    model.add(Dense(classes))
     model.add(Activation("softmax"))
 
     return model
