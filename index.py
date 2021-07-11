@@ -20,7 +20,7 @@ IMAGE_DIMS_2D = (256, 256)
 
 IMAGE_EXTENSION = '.jpg'
 
-IMAGES_PATH = '/content/drive/MyDrive/faces'
+IMAGES_PATH = '/content/drive/MyDrive/faces/'
 
 def create_model(classes, loss):
 
