@@ -197,6 +197,7 @@ def train_gender_model(gender_train_data, gender_train_labels):
 def main():
     data = data_loader()
 
+    print('>> making training data...')
     (age_train_data, age_train_labels, gender_train_data, gender_train_labels) = make_train_data(data, IMAGES_PATH)
     
     print('>> training age model...')
