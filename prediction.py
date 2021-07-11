@@ -46,5 +46,7 @@ def main():
     print('>> gender results predicts...')
     print(gender_results)
 
+    show_frame(frame)
+
 if __name__ == "__main__":
     main()
