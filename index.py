@@ -1,9 +1,12 @@
 import os
+import os.path
+
 import cv2
 import numpy as np
 
 from model import make_model
 
+from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -20,27 +23,7 @@ IMAGE_DIMS_2D = (256, 256)
 
 IMAGE_EXTENSION = '.jpg'
 
-IMAGES_PATH = '/content/drive/MyDrive/faces/'
-
-def create_model(classes, loss):
-
-    model = make_model(classes = classes, input_shape = IMAGE_DIMS)
-    model.compile(loss = loss, optimizer = 'adam', metrics = ["accuracy"])
-
-    return model
-
-
-def make_original_image(image_name):
-    name = image_name.split('.')[2]
-    return f'{name}{IMAGE_EXTENSION}'
-
-
-def find_image_data(data, user_id, original_image):
-    for record in data:
-        if record['user_id'] == user_id and record['original_image'] == original_image:
-            return record
-    
-    return None
+IMAGES_PATH = 'content/drive/MyDrive/faces/'
 
 age_mapping = [
     ('(0, 2)', '0-2'),
@@ -74,7 +57,29 @@ age_mapping = [
     ('57', '60+'),
     ('58', '60+')
 ]
+
 age_mapping_dict = {each[0]: each[1] for each in age_mapping}
+
+def create_model(classes, loss):
+
+    model = make_model(classes = classes, input_shape = IMAGE_DIMS)
+    model.compile(loss = loss, optimizer = 'adam', metrics = ["accuracy"])
+
+    return model
+
+
+def make_original_image(image_name):
+    name = image_name.split('.')[2]
+    return f'{name}{IMAGE_EXTENSION}'
+
+
+def find_image_data(data, user_id, original_image):
+    for record in data:
+        if record['user_id'] == user_id and record['original_image'] == original_image:
+            return record
+    
+    return None
+
 
 def make_train_data(data, images_path):
     age_train_data = []
@@ -134,6 +139,12 @@ def train_age_model(age_train_data, age_train_labels):
     age_test_x = age_train_data[int(len(age_train_data)*.8):]
     age_test_y = age_train_labels[int(len(age_train_data)*.8):]
 
+    if (os.path.exists('age_model.h5')):
+        print('>> age model exists!')
+        existing_model = load_model('age_model.h5')
+
+        return ((age_test_x, age_test_y), existing_model)
+
     age_model = create_model(
         classes = len(age_label_binarizer.classes_),
         loss = "categorical_crossentropy"
@@ -157,6 +168,8 @@ def train_age_model(age_train_data, age_train_labels):
 
     age_model.save('age_model_2.h5')
 
+    return ((age_test_x, age_test_y), age_model)
+
 def train_gender_model(gender_train_data, gender_train_labels):
     gender_train_data = np.array(gender_train_data, dtype = "float") // 255
     gender_train_labels = np.array(gender_train_labels)
@@ -164,12 +177,16 @@ def train_gender_model(gender_train_data, gender_train_labels):
     gender_label_binarizer = LabelBinarizer()
     gender_train_labels = gender_label_binarizer.fit_transform(gender_train_labels)
 
-    print(len(gender_train_labels))
-
     gender_train_x = gender_train_data[:int(len(gender_train_data)*.8)]
     gender_train_y = gender_train_labels[:int(len(gender_train_data)*.8)]
     gender_test_x = gender_train_data[int(len(gender_train_data)*.8):]
     gender_test_y = gender_train_labels[int(len(gender_train_data)*.8):]
+
+    if (os.path.exists('gender_model.h5')):
+        print('>> gender model exists!')
+        existing_model = load_model('gender_model.h5')
+
+        return ((gender_test_x, gender_test_y), existing_model)
 
     gender_model = create_model(
         classes = len(gender_label_binarizer.classes_),
@@ -194,6 +211,8 @@ def train_gender_model(gender_train_data, gender_train_labels):
 
     gender_model.save('gender_model_2.h5')
 
+    return ((gender_test_x, gender_test_y), gender_model)
+
 def main():
     data = data_loader()
 
@@ -201,12 +220,36 @@ def main():
     (age_train_data, age_train_labels, gender_train_data, gender_train_labels) = make_train_data(data, IMAGES_PATH)
     
     print('>> training age model...')
-    train_age_model(age_train_data, age_train_labels)
+    (age_test, age_model) = train_age_model(age_train_data, age_train_labels)
     print('>> age model trained!')
 
     print('>> training gender model...')
-    train_gender_model(gender_train_data, gender_train_labels)
+    (gender_test, gender_model) = train_gender_model(gender_train_data, gender_train_labels)
     print('>> gender model trained!')
+
+    age_model.summary()
+    gender_model.summary()
+
+    (AGE_TEST_IMAGES, AGE_TEST_LABELS) = age_test
+    (GENDER_TEST_IMAGES, GENDER_TEST_LABELS) = gender_test
+
+    # age model - evaluation
+    try:
+        age_test_loss, age_test_acc = age_model.evaluate(AGE_TEST_IMAGES, AGE_TEST_LABELS, verbose=2)
+        print('>> age test - loss: ', age_test_loss)
+        print('>> age test - acc: ', age_test_acc)
+    except Exception as e:
+        # handle evaluation error
+        print(e)
+
+    # gender model - evaluation
+    try:
+        gender_test_loss, gender_test_acc = gender_model.evaluate(GENDER_TEST_IMAGES, GENDER_TEST_LABELS, verbose=2)
+        print('>> gender test - loss: ', gender_test_loss)
+        print('>> gender test - acc: ', gender_test_acc)
+    except Exception as e:
+        # handle evaluation error
+        print(e)
 
 if __name__ == "__main__":
     main()
