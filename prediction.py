@@ -37,12 +37,12 @@ def main():
     img_predict = np.array([img_predict]).reshape((1, 256, 256, 3))
 
     print('>> predicting age results...')
-    age_results = age_model.predict_classes(img_predict)
+    age_results = age_model.predict(img_predict)
     print('>> age results predicts...')
     print(age_results)
-
+    
     print('>> predicting gender results...')
-    gender_results = gender_model.predict_classes(img_predict)
+    gender_results = gender_model.predict(img_predict)
     print('>> gender results predicts...')
     print(gender_results)
 
