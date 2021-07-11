@@ -13,7 +13,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from sklearn.preprocessing import LabelBinarizer
 
 from loader import data_loader
-from constants.index import age_list, gender_list
+from constants.index import gender_list
 
 BS = 32
 EPOCHS = 50

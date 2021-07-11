@@ -1,15 +1,8 @@
 import cv2
-
 import numpy as np
-import urllib.request
-import matplotlib.pyplot as plt
 
 from keras.models import load_model
-from keras.preprocessing.image import img_to_array
-
 from face_recognition.index import recognize
-
-from PIL import Image
 
 ec = 30
 
