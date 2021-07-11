@@ -20,6 +20,8 @@ IMAGE_DIMS_2D = (256, 256)
 
 IMAGE_EXTENSION = '.jpg'
 
+IMAGES_PATH = '/content/drive/MyDrive/faces'
+
 def create_model(classes, loss):
 
     model = make_model(classes = classes, input_shape = IMAGE_DIMS)
@@ -195,8 +197,7 @@ def train_gender_model(gender_train_data, gender_train_labels):
 def main():
     data = data_loader()
 
-    images_path = 'images/faces/'
-    (age_train_data, age_train_labels, gender_train_data, gender_train_labels) = make_train_data(data, images_path)
+    (age_train_data, age_train_labels, gender_train_data, gender_train_labels) = make_train_data(data, IMAGES_PATH)
     
     print('>> training age model...')
     train_age_model(age_train_data, age_train_labels)
