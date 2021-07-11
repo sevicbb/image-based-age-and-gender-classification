@@ -16,15 +16,12 @@ ca-certificates=2021.5.30=h033912b_0
 cachetools=4.2.2=pyhd8ed1ab_0
 cairo=1.16.0=he43a7df_1008
 certifi=2021.5.30=py36h79c6626_0
-cffi=1.14.5=py36h66709a0_0
+cffi=1.14.6=py36h66709a0_0
 chardet=4.0.0=py36h79c6626_1
 click=8.0.1=py36h79c6626_0
 cryptography=3.4.7=py36h3d45be8_0
 cycler=0.10.0=py_2
 dataclasses=0.8=pyh787bdff_0
-dlib=19.22.0=py36hd437da2_0
-face_recognition=1.3.0=pyhd3deb0d_2
-face_recognition_models=0.3.0=pyh9f0ad1d_0
 ffmpeg=4.3.1=hb787a4c_2
 fontconfig=2.13.1=h10f422b_1005
 freetype=2.10.4=h4cff582_1
@@ -55,7 +52,7 @@ keras-preprocessing=1.1.2=pyhd8ed1ab_0
 kiwisolver=1.3.1=py36hc61eee1_1
 krb5=1.19.1=hcfbf3a7_0
 lame=3.100=h35c211d_1001
-lcms2=2.11=h92f6f08_0
+lcms2=2.12=h577c468_0
 lerc=2.2.1=h046ec9c_0
 libblas=3.9.0=9_openblas
 libcblas=3.9.0=9_openblas
@@ -90,7 +87,7 @@ ncurses=6.2=h2e338ed_4
 nettle=3.6=hedd7734_0
 numpy=1.19.5=py36h08dc641_1
 oauthlib=3.1.1=pyhd8ed1ab_0
-olefile=0.46=py36_0
+olefile=0.46=pyh9f0ad1d_1
 opencv=4.5.2=py36h79c6626_0
 openh264=2.1.1=hfd3ada9_0
 openssl=1.1.1k=h0d85af4_0
