@@ -115,7 +115,7 @@ def make_train_data(data, images_path):
                 gender_train_data.append(image)
 
         # temporary, check memory problems
-        if len(age_train_data) > 100:
+        if len(age_train_data) > 1000:
             return (age_train_data, age_train_labels, gender_train_data, gender_train_labels)
 
     return (age_train_data, age_train_labels, gender_train_data, gender_train_labels)
@@ -153,7 +153,7 @@ def train_age_model(age_train_data, age_train_labels):
         steps_per_epoch = len(age_train_x) // BS,
         epochs = EPOCHS, verbose = 1)
 
-    age_model.save('age_model.h5')
+    age_model.save('age_model_2.h5')
 
 def train_gender_model(gender_train_data, gender_train_labels):
     gender_train_data = np.array(gender_train_data, dtype = "float") // 255
@@ -190,7 +190,7 @@ def train_gender_model(gender_train_data, gender_train_labels):
         steps_per_epoch = len(gender_train_x) // BS,
         epochs = EPOCHS, verbose = 1)
 
-    gender_model.save('gender_model.h5')
+    gender_model.save('gender_model_2.h5')
 
 def main():
     data = data_loader()
