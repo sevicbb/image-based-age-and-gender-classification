@@ -11,6 +11,8 @@ from face_recognition.index import recognize
 
 from PIL import Image
 
+ec = 30
+
 def show_frame(frame):
     cv2.imshow('Age and gender prediction', frame)
     if cv2.waitKey(50000) == 27:
@@ -31,7 +33,7 @@ def main():
 
     cv2.rectangle(frame, (face_locations3, face_locations0), (face_locations1, face_locations2), (255, 200, 0), 2)
 
-    img = frame[face_locations0 - 30 : face_locations2 + 30, face_locations3 - 30 : face_locations1 + 30]
+    img = frame[face_locations0 - ec : face_locations2 + ec, face_locations3 - ec : face_locations1 + ec]
 
     img_predict = cv2.resize(img, (256, 256))
     img_predict = np.array([img_predict]).reshape((1, 256, 256, 3))
