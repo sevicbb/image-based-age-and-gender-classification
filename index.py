@@ -1,14 +1,9 @@
-
 import os
 import cv2
 import numpy as np
-import urllib.request
-
-import matplotlib.pyplot as plt
 
 from model import make_model
 
-from keras.optimizers import Adam
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -17,19 +12,18 @@ from sklearn.preprocessing import LabelBinarizer
 from loader import data_loader
 from constants.index import age_list, gender_list
 
-from PIL import Image
-
 BS = 32
-EPOCHS = 1
+EPOCHS = 50
 
 IMAGE_DIMS = (256, 256, 3)
 IMAGE_DIMS_2D = (256, 256)
 
 IMAGE_EXTENSION = '.jpg'
 
-def create_model(classes):
+def create_model(classes, loss):
+
     model = make_model(classes = classes, input_shape = IMAGE_DIMS)
-    model.compile(loss = "categorical_crossentropy", optimizer = 'adam', metrics = ["accuracy"])
+    model.compile(loss = loss, optimizer = 'adam', metrics = ["accuracy"])
 
     return model
 
@@ -84,6 +78,9 @@ def make_train_data(data, images_path):
     age_train_data = []
     age_train_labels = []
 
+    gender_train_data = []
+    gender_train_labels = []
+
     for user_id in os.listdir(images_path):
         user_images_path = f'{images_path}{user_id}/'
         for image_name in os.listdir(user_images_path):
@@ -105,6 +102,9 @@ def make_train_data(data, images_path):
                 age_label = age_mapping_dict[age_label_source]
                 age_train_labels.append(age_label)
 
+                gender_label = gender_label_source
+                gender_train_labels.append(gender_label)
+
                 image_path = os.path.join(user_images_path, image_name)
 
                 image = cv2.imread(image_path)
@@ -112,12 +112,13 @@ def make_train_data(data, images_path):
                 image = img_to_array(image)
 
                 age_train_data.append(image)
+                gender_train_data.append(image)
 
         # temporary, check memory problems
         if len(age_train_data) > 100:
-            return (age_train_data, age_train_labels)
+            return (age_train_data, age_train_labels, gender_train_data, gender_train_labels)
 
-    return (age_train_data, age_train_labels)
+    return (age_train_data, age_train_labels, gender_train_data, gender_train_labels)
 
 def train_age_model(age_train_data, age_train_labels):
     age_train_data = np.array(age_train_data, dtype = "float") // 255
@@ -131,7 +132,10 @@ def train_age_model(age_train_data, age_train_labels):
     age_test_x = age_train_data[int(len(age_train_data)*.8):]
     age_test_y = age_train_labels[int(len(age_train_data)*.8):]
 
-    age_model = create_model(classes = len(age_label_binarizer.classes_))
+    age_model = create_model(
+        classes = len(age_label_binarizer.classes_),
+        loss = "categorical_crossentropy"
+    )
 
     aug = ImageDataGenerator(
         rotation_range = 25, 
@@ -158,12 +162,17 @@ def train_gender_model(gender_train_data, gender_train_labels):
     gender_label_binarizer = LabelBinarizer()
     gender_train_labels = gender_label_binarizer.fit_transform(gender_train_labels)
 
+    print(len(gender_train_labels))
+
     gender_train_x = gender_train_data[:int(len(gender_train_data)*.8)]
     gender_train_y = gender_train_labels[:int(len(gender_train_data)*.8)]
     gender_test_x = gender_train_data[int(len(gender_train_data)*.8):]
     gender_test_y = gender_train_labels[int(len(gender_train_data)*.8):]
 
-    gender_model = create_model(classes = len(gender_label_binarizer.classes_))
+    gender_model = create_model(
+        classes = len(gender_label_binarizer.classes_),
+        loss = "sparse_categorical_crossentropy"
+    )
 
     aug = ImageDataGenerator(
         rotation_range = 25, 
@@ -189,23 +198,13 @@ def main():
     images_path = 'images/faces/'
     (age_train_data, age_train_labels, gender_train_data, gender_train_labels) = make_train_data(data, images_path)
     
+    print('>> training age model...')
     train_age_model(age_train_data, age_train_labels)
+    print('>> age model trained!')
+
+    print('>> training gender model...')
     train_gender_model(gender_train_data, gender_train_labels)
-
-    # # print(age_H)
-
-    # urllib.request.urlretrieve(
-    #     "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZmFjZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80",
-    #     "temp.jpg")
-  
-    # input_image = Image.open("temp.jpg")
-
-    # plt.imshow(input_image)
-    # plt.show()
-
-    # # prediction
-    # prediction = age_model.predict([input_image]) 
-    # print(prediction)
+    print('>> gender model trained!')
 
 if __name__ == "__main__":
     main()

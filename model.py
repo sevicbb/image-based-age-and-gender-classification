@@ -33,13 +33,15 @@ def make_model(classes, input_shape):
 
     model.add(Dense(512))
     model.add(Activation("relu"))
+    model.add(Dropout(rate=0.25))
 
     model.add(Dense(512))
     model.add(Activation("relu"))
+    model.add(Dropout(rate=0.25))
 
     model.add(Dense(classes))
     model.add(Activation("softmax"))
 
-    model.summary()
+    # model.summary()
 
     return model
